@@ -40,6 +40,7 @@ export async function resolveCast(cast: string[]): Promise<CastMember[]> {
       let ref = await cc.doc(c1).get();
       let c2 = ref.data();
       if (c2) {
+        c2.id = ref.id
         if (orgCache.has(c2.outlet)) {
           c2.outlet = orgCache.get(c2.outlet);
         } else {

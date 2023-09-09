@@ -5,6 +5,7 @@ export enum CommonError {
   GENERAL = 0,
   MissingRequiredField = 1,
   ProfileCreationFailed = 2,
+  EpisodeNotRecognized = 3,
 }
 
 /**
@@ -18,6 +19,8 @@ export function resolveErrorMessage(code: CommonError): string {
       return 'The server encountered an unexpected error handling your request (details below)'
     case CommonError.MissingRequiredField:
       return 'Missing one or more required fields (details below)';
+    case CommonError.EpisodeNotRecognized:
+      return 'The episode ID provided does not match an entry in our archive.';
     default:
       return 'Unknown Error Code'
   }
