@@ -32,22 +32,12 @@ router.get('/api-docs', swagger.setup({
     title: "The WAN Database API",
     version: "1.0.0",
   },
-  definitions: {
-    Todo: {
-      type: "object",
-      properties: {
-        id: {
-          type: "number",
-        },
-        message: {
-          type: "string",
-        },
-      },
-      required: ["id", "message"],
-    },
-  },
   paths: {
-    '/profile': { ...profile.operations }
+    '/profile': { ...profile.operations },
+    '/banners': { ...banners.operations },
+    '/episodes': { ...episodes.operations },
+    '/cast': { ...cast.operations },
+    '/player': { ...player.operations }
   },
 }))
 
