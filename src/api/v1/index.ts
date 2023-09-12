@@ -9,7 +9,7 @@ import player from "./player";
 
 const router = Router()
 
-router.get('/', (_, res) => {
+router.get('/', (_: any, res: any) => {
   res.json({
     notes: "This endpoint is an index endpoint, it does not serve any purpose except metadata dissemination",
     metadata: {
@@ -24,8 +24,8 @@ router.get('/', (_, res) => {
   })
 })
 
-router.use('/api-docs', swagger.serve)
-router.get('/api-docs', swagger.setup({
+router.use('/swagger', swagger.serve)
+router.get('/swagger', swagger.setup({
   openapi: "3.1.0",
   basePath: "/api/v1",
   info: {

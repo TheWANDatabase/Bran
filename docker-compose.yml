@@ -1,9 +1,9 @@
 version: '2'
 
 services:
-  bran:
+  api:
     build: .
-    image: twdb/bran
+    image: altriuscodes/twdb:bran
     env_file:
       - .env
     ports:
