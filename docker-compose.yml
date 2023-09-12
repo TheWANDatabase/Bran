@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  bran:
+    build: .
+    image: twdb/bran
+    env_file:
+      - .env
+    ports:
+      - 3333:3333/tcp

@@ -27,5 +27,5 @@ io.on("connection", (...params: any) => {
 
 
 server.listen(process.env.PORT, () => {
-  console.log(`Running at ${process.env.HOST}: ${process.env.PORT}`);
+  console.log(`TWDB/Bran is available at ${process.env.HOST}:${process.env.PORT}`);
 });

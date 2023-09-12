@@ -1,8 +1,6 @@
 import admin from "firebase-admin"
 
-if ('FIREBASE_SERVICE_ACCOUNT_KEY' in process.env) {
-
-} else {
+if (!('FIREBASE_SERVICE_ACCOUNT_KEY' in process.env)) {
   throw new Error("Cannot launch API server without a Firebase Service Account environment variable")
 }
 

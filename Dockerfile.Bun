@@ -1,0 +1,19 @@
+# Caution, This dockerfile is for use testing the Bun runtime (currently not compatible)
+FROM oven/bun as build
+
+WORKDIR /app
+
+COPY ./src src
+COPY ./fb_key.json .
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
+RUN bun install
+
+FROM oven/bun
+
+WORKDIR /app
+
+COPY --from=build /app .
+
+CMD ["bun", "src/index.ts"]
