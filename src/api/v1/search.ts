@@ -18,20 +18,28 @@ async function POST(req: Request, res: Response) {
 
   try {
     if (isValid(req.body)) {
-      let docuCol = await firebase.db.collection('episodes')
-        .where('__name__', 'in', req.body.episodes)
-        .get();
-      let docs = docuCol.docs.map((d: any) => {
-        return {
-          id: d.id,
-          ...d.data()
-        }
-      })
-
       let x: any = {};
+      let core: string[] = [];
+      
+      while (req.body.episodes.length > 0) {
+        core.push(req.body.episodes.pop() || '');
+        if (core.length > 20) {
+          let docs = await filterBy(core);
 
-      for(let i=0;i<docs.length;i++) {
-        x[docs[i].id] = docs[i]
+          for (let i = 0; i < docs.length; i++) {
+            x[docs[i].id] = docs[i]
+          }
+
+          core = []
+        }
+      }
+
+      if (core.length > 0) {
+        let docs = await filterBy(core);
+
+        for (let i = 0; i < docs.length; i++) {
+          x[docs[i].id] = docs[i]
+        }
       }
 
       timer.resolve(req, res, x);
@@ -43,6 +51,18 @@ async function POST(req: Request, res: Response) {
   }
 }
 
+
+async function filterBy(ids: string[]) {
+  let ref = await firebase.db.collection('episodes')
+    .where('__name__', 'in', ids)
+    .get();
+  return ref.docs.map((d: any) => {
+    return {
+      id: d.id,
+      ...d.data()
+    }
+  })
+}
 
 
 const router = Router();
