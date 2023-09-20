@@ -7,6 +7,7 @@ import episodes from "./episodes";
 import cast from "./cast";
 import player from "./player";
 import search from "./search";
+import ytnotif from "./ytnotif";
 
 const router = Router()
 
@@ -48,6 +49,7 @@ router.use(episodes.path, episodes.router);
 router.use(cast.path, cast.router);
 router.use(player.path, player.router);
 router.use(search.path, search.router);
+router.use(ytnotif.path, ytnotif.router)
 
 export default {
   path: '/v1',
