@@ -10,10 +10,16 @@ async function GET(req: Request, res: Response) {
   res.status(200).end();
 }
 
+async function POST(req: Request, res: Response) {
+  console.log(req.body);
+  res.status(200).end();
+}
+
 
 
 const router = Router();
 router.get('/', GET);
+router.post('/', POST);
 
 export default {
   path: '/ytnotif',
