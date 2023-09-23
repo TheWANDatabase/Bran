@@ -7,6 +7,7 @@ COPY ./fb_key.json .
 COPY package.json .
 COPY package-lock.json .
 COPY tsconfig.json .
+
 RUN npm install -ci
 RUN npm i -g typescript
 RUN npm run build
