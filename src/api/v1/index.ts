@@ -8,6 +8,7 @@ import cast from "./cast";
 import player from "./player";
 import search from "./search";
 import ytnotif from "./ytnotif";
+import bingo from "./bingo";
 
 const router = Router()
 
@@ -39,7 +40,8 @@ router.get('/swagger', swagger.setup({
     '/banners': { ...banners.operations },
     '/episodes': { ...episodes.operations },
     '/cast': { ...cast.operations },
-    '/player': { ...player.operations }
+    '/player': { ...player.operations },
+    '/bingo': { ...bingo.operations }
   },
 }))
 
@@ -50,6 +52,7 @@ router.use(cast.path, cast.router);
 router.use(player.path, player.router);
 router.use(search.path, search.router);
 router.use(ytnotif.path, ytnotif.router)
+router.use(bingo.path, bingo.router)
 
 export default {
   path: '/v1',
