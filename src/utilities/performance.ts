@@ -19,6 +19,7 @@ export class Timer {
 
   reject(request: Request, response: Response, error: ApiError, status: number = 500) {
     console.log(request.method, request.url)
+    console.log(error)
     response.status(status).json({
       error,
       duration: Date.now() - this.start
