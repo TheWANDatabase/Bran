@@ -1,4 +1,5 @@
 import amqplib from "amqplib";
+import * as notifications from "./notifications";
 
 export let connection: amqplib.Connection;
 export let defaultChannel: amqplib.Channel;
@@ -41,6 +42,36 @@ export async function connect() {
   }
 
 
+  if (defaultChannel) {
+    console.log("Assigning queue")
+    await defaultChannel.assertQueue('fp.notifications.bran', {
+      durable: true,
+      autoDelete: false
+    })
+    await defaultChannel.assertQueue('yt.notifications.bran', {
+      durable: true,
+      autoDelete: false
+    })
+    await defaultChannel.assertQueue('bingo.notifications.bran', {
+      durable: true,
+      autoDelete: false
+    })
+
+    console.log("Binding Floatplane")
+    await defaultChannel.bindQueue('fp.notifications.bran', 'fp.notifications', '');
+
+    console.log("Binding Youtube")
+    await defaultChannel.bindQueue('yt.notifications.bran', 'yt.notifications', '');
+
+    console.log("Binding Bingo")
+    await defaultChannel.bindQueue('bingo.notifications.bran', 'bingo.notifications', '');
+
+
+    console.log("Waiting for incoming messages to notifications.bran")
+    await defaultChannel.consume('fp.notifications.bran', notifications.floatplane)
+    await defaultChannel.consume('yt.notifications.bran', notifications.youtube)
+    await defaultChannel.consume('bingo.notifications.bran', notifications.bingo)
+  }
 }
 
 export function transmit(exchange: string, key: string, body: string, format: string = 'json'): boolean {
@@ -50,3 +81,56 @@ export function transmit(exchange: string, key: string, body: string, format: st
     }
   })
 }
+
+export function processRawMessage(raw: amqplib.ConsumeMessage, islbg: boolean = false): any {
+  try {
+    console.log(raw)
+    if (raw.properties.headers['format']) {
+      switch (raw.properties.headers['format']) {
+        case 'json':
+          return {
+            data: JSON.parse(raw.content.toString('utf-8')),
+            error: false
+          };
+
+        case 'error':
+          let temp = {
+            data: JSON.parse(raw.content.toString('utf-8')),
+            error: false
+          };
+
+          temp.data.error = JSON.parse(temp.data.error);
+          return temp;
+
+        default:
+          throw new Error("Message is not in an accepted format");
+
+      }
+    } else {
+      throw new Error("Message is missing required headers", {
+
+
+      });
+    }
+  } catch (e: any) {
+    defaultChannel.ack(raw);
+    if (!islbg) {
+      transmit('lumberjack', '', JSON.stringify({
+        message: raw,
+        error: JSON.stringify(e, Object.getOwnPropertyNames(e)),
+        timestamp: Date.now(),
+        severity: {
+          id: 3,
+          name: 'normal'
+        }
+      }), 'error');
+    } else {
+      console.log('lumberjack encountered an error: ', e)
+    }
+  }
+  return {
+    data: null,
+    error: true
+  };
+}
+

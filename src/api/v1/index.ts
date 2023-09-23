@@ -9,6 +9,7 @@ import player from "./player";
 import search from "./search";
 import ytnotif from "./ytnotif";
 import bingo from "./bingo";
+import live from "./live";
 
 const router = Router()
 
@@ -41,7 +42,8 @@ router.get('/swagger', swagger.setup({
     '/episodes': { ...episodes.operations },
     '/cast': { ...cast.operations },
     '/player': { ...player.operations },
-    '/bingo': { ...bingo.operations }
+    '/bingo': { ...bingo.operations },
+    '/live': { ...live.operations }
   },
 }))
 
@@ -51,8 +53,9 @@ router.use(episodes.path, episodes.router);
 router.use(cast.path, cast.router);
 router.use(player.path, player.router);
 router.use(search.path, search.router);
-router.use(ytnotif.path, ytnotif.router)
-router.use(bingo.path, bingo.router)
+router.use(ytnotif.path, ytnotif.router);
+router.use(bingo.path, bingo.router);
+router.use(live.path, live.router);
 
 export default {
   path: '/v1',

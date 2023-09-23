@@ -4,7 +4,7 @@
   "description": "REST API behind much functionality of https://thewandb.com and its powerful suite of search, and archive utilities",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "tsc && node .",
+    "dev": "tsc && node dist/index.js",
     "build": "tsc"
   },
   "keywords": [],
