@@ -1,5 +1,5 @@
 import { processRawMessage, defaultChannel as ch } from "./amqp";
-import db from './firebase';
+import frb from './firebase';
 
 export let floatplane_video = {
   live: false,
@@ -18,6 +18,7 @@ export async function floatplane(raw: any) {
   if (raw === null) return;
   if (raw.content.length === 0) return ch.ack(raw);
   try {
+    if (raw.properties.headers.env !== process.env.ENV) return;
     const { data, error } = processRawMessage(raw);
 
     if (data.offline) {
@@ -33,6 +34,7 @@ export async function floatplane(raw: any) {
           duration: -1,
           title: data.title,
           floatplane: data.id,
+          streamData: data,
           flags: {
             aod: false,
             corrupt: false,
@@ -48,6 +50,39 @@ export async function floatplane(raw: any) {
             vtt: false
           }
         };
+
+        await frb.db.collection('live').doc('live').set(obj);
+        console.log(process.env.FP_HOOK)
+        if (process.env.FP_HOOK) {
+          let x = await fetch(process.env.FP_HOOK, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "content": "",
+              "tts": false,
+              "embeds": [
+                {
+                  "id": 652627557,
+                  "title": data.title,
+                  "description": "A new episode of The WAN Show has started on Floatplane \n(This is likely the pre-show)",
+                  "color": 34303,
+                  "fields": [],
+                  "url": "https://thewandb.com/live",
+                  "image": {
+                    "url": data.thumbnail.path
+                  },
+                  "timestamp": new Date(data.timestamp).toISOString(),
+                  "footer": {
+                    "text": "Powered by Floatplane",
+                    "icon_url": "https://frontend.floatplane.com/4.1.25/assets/images/brand/floatplane/favicon/classic/196x196.png"
+                  }
+                }
+              ],
+            })
+          })
+        }
       }
     }
 

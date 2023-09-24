@@ -69,7 +69,7 @@ async function POST(req: Request, res: Response) {
 
       query = query.limit(req.body.limit)
         .offset(req.body.offset)
-
+        .where('duration', '>', -1)
       let ref = await query.get();
       let ref2 = await q2.count().get();
       let results: any = ref.docs.map((m) => {
@@ -85,7 +85,7 @@ async function POST(req: Request, res: Response) {
         ep.cast = cast;
         results[i] = ep
       }
-      
+
       timer.resolve(req, res, {
         episodes: results,
         stats: ref2.data().count

@@ -44,33 +44,35 @@ export async function connect() {
 
   if (defaultChannel) {
     console.log("Assigning queue")
-    await defaultChannel.assertQueue('fp.notifications.bran', {
+    await defaultChannel.assertQueue(process.env.ENV + '.fp.notifications.bran', {
       durable: true,
       autoDelete: false
     })
-    await defaultChannel.assertQueue('yt.notifications.bran', {
+
+    await defaultChannel.assertQueue(process.env.ENV + '.yt.notifications.bran', {
       durable: true,
       autoDelete: false
     })
-    await defaultChannel.assertQueue('bingo.notifications.bran', {
+
+    await defaultChannel.assertQueue(process.env.ENV + '.bingo.notifications.bran', {
       durable: true,
       autoDelete: false
     })
+
 
     console.log("Binding Floatplane")
-    await defaultChannel.bindQueue('fp.notifications.bran', 'fp.notifications', '');
+    await defaultChannel.bindQueue(process.env.ENV + '.fp.notifications.bran', 'fp.notifications', '');
 
     console.log("Binding Youtube")
-    await defaultChannel.bindQueue('yt.notifications.bran', 'yt.notifications', '');
+    await defaultChannel.bindQueue(process.env.ENV + '.yt.notifications.bran', 'yt.notifications', '');
 
     console.log("Binding Bingo")
-    await defaultChannel.bindQueue('bingo.notifications.bran', 'bingo.notifications', '');
-
+    await defaultChannel.bindQueue(process.env.ENV + '.bingo.notifications.bran', 'bingo.notifications', '');
 
     console.log("Waiting for incoming messages to notifications.bran")
-    await defaultChannel.consume('fp.notifications.bran', notifications.floatplane)
-    await defaultChannel.consume('yt.notifications.bran', notifications.youtube)
-    await defaultChannel.consume('bingo.notifications.bran', notifications.bingo)
+    await defaultChannel.consume(process.env.ENV + '.fp.notifications.bran', notifications.floatplane)
+    await defaultChannel.consume(process.env.ENV + '.yt.notifications.bran', notifications.youtube)
+    await defaultChannel.consume(process.env.ENV + '.bingo.notifications.bran', notifications.bingo)
   }
 }
 
@@ -84,7 +86,6 @@ export function transmit(exchange: string, key: string, body: string, format: st
 
 export function processRawMessage(raw: amqplib.ConsumeMessage, islbg: boolean = false): any {
   try {
-    console.log(raw)
     if (raw.properties.headers['format']) {
       switch (raw.properties.headers['format']) {
         case 'json':
