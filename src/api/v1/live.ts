@@ -40,12 +40,26 @@ async function GET_TWITCH(req: Request, res: Response) {
   }
 }
 
+async function GET(req: Request, res: Response) {
+  const timer = new Timer();
 
+  try {
+    timer.resolve(req, res, {
+      youtube: youtube_video,
+      floatplan: floatplane_video,
+      twitch: twitch_video,
+      internal: (await firebase.db.collection('live').doc('live').get()).data()
+    })
+  } catch (e: unknown) {
+    timer.reject(req, res, new ApiError(CommonError.GENERAL, e), 500)
+  }
+}
 
 const router = Router();
 router.get('/floatplane', GET_FLOATPLANE);
 router.get('/youtube', GET_YOUTUBE);
 router.get('/twitch', GET_TWITCH);
+router.get('/', GET)
 
 export default {
   path: '/live',

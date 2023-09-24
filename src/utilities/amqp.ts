@@ -76,10 +76,11 @@ export async function connect() {
   }
 }
 
-export function transmit(exchange: string, key: string, body: string, format: string = 'json'): boolean {
+export function transmit(exchange: string, key: string, body: string, format: string = 'json', additionalHeaders: any = {}): boolean {
   return defaultChannel.publish(exchange, key, Buffer.from(body), {
     headers: {
-      'format': format
+      'format': format,
+      ...additionalHeaders
     }
   })
 }

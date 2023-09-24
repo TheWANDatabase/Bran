@@ -1,4 +1,4 @@
-import { processRawMessage, defaultChannel as ch } from "./amqp";
+import { processRawMessage, defaultChannel as ch, transmit } from "./amqp";
 import frb from './firebase';
 
 export let floatplane_video = {
@@ -53,6 +53,28 @@ export async function floatplane(raw: any) {
 
         await frb.db.collection('live').doc('live').set(obj);
         console.log(process.env.FP_HOOK)
+        transmit('ui.notifications', '', JSON.stringify({
+          "rawToast": {
+            "title": "Bingo Session Started",
+            "description": "A new session of WAN Show Bingo has begun!",
+            "avatar": {
+              "src": "https://wanshow.bingo/resources/images/favicon-32x32.png"
+            },
+            "color": "green"
+          },
+          "actions": [
+            {
+              "visible": {
+                "label": "Join The Fun"
+              },
+              "handler": {
+                "type": "redirect",
+                "target": "_blank",
+                "url": "https://wanshow.bingo/"
+              }
+            }
+          ]
+        }),)
         if (process.env.FP_HOOK) {
           let x = await fetch(process.env.FP_HOOK, {
             method: 'POST',
